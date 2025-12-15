@@ -13,7 +13,35 @@
 - **Backend-driven design:** New features are added by extending backend modules and invoking them from existing GUI hooks. GUI never contains DSP or device-specific code.
 
 ## 3. System Architecture Diagram (Textual)
-`GUI_D_3_2_1.py` (user actions, parameter collection) → backend orchestrator calls (within GUI file) → DSP modules in `analysis/` → audio capture/playback or WAV I/O in `audio/` → results + plots returned → plotting helpers in `utils/plot_windows.py` open independent windows for visualization → GUI displays statuses/logs without blocking.
+```
+g1-main/
+├─ GUI_D_3_2_1.py          ⭐ GUI chính (REFERENCE – KHÔNG ĐƯỢC ĐỘNG)
+├─ analysis/
+│  ├─ __init__.py
+│  ├─ thd.py               # Tính THD, harmonic
+│  ├─ compressor.py        # Phân tích compressor curve
+│  ├─ attack_release.py    # Attack / Release
+│  ├─ compare.py           # Align, gain-match, residual
+│  └─ live_measurements.py # Orchestrator cho đo realtime
+│
+├─ audio/
+│  ├─ __init__.py
+│  ├─ devices.py           # Liệt kê & parse soundcard
+│  ├─ playrec.py           # play & record realtime
+│  └─ wav_io.py            # read/write wav
+│
+├─ utils/
+│  ├─ __init__.py
+│  ├─ logging.py           # UILogger
+│  ├─ threading.py         # run_in_thread + stop_event
+│  └─ plot_windows.py      # Cửa sổ plot (Tk / matplotlib)
+│
+├─ tests/
+│  └─ self_test.py         # offline DSP self-test
+│
+├─ requirements.txt
+└─ .gitignore
+```
 
 ## 4. Module Responsibilities
 ### 4.1 GUI Layer (`GUI_D_3_2_1.py`)
